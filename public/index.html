@@ -1,1 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C_TS452 · Cockpit de Estudo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0E141C;
+  --panel: #161F2B;
+  --panel-2: #1C2735;
+  --line: #263446;
+  --text: #E6EDF6;
+  --dim: #8CA0B8;
+  --blue: #4DA3FF;
+  --amber: #FFB547;
+  --red: #FF6259;
+  --green: #3FD68F;
+  --radius: 10px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+.mono { font-family: 'IBM Plex Mono', monospace; }
 
+header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--line);
+}
+header h1 { font-size: 15px; font-weight: 600; letter-spacing: .02em; }
+header h1 span { color: var(--blue); }
+#queueCount {
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--dim);
+}
+#queueCount b { color: var(--amber); font-weight: 500; }
+
+main { max-width: 680px; margin: 0 auto; padding: 18px; }
+
+.card {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px; margin-bottom: 14px;
+}
+.area-badge {
+  display: inline-block; font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: var(--blue); border: 1px solid var(--line);
+  border-radius: 4px; padding: 2px 8px; margin-bottom: 10px;
+  letter-spacing: .03em;
+}
+.concept-title { font-size: 19px; font-weight: 600; line-height: 1.3; }
+.work-case {
+  margin-top: 10px; font-size: 13px; color: var(--dim);
+  border-left: 2px solid var(--amber); padding-left: 10px;
+}
+.state-line {
+  margin-top: 12px; font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: var(--dim);
+}
+
+/* Trilho do processo (assinatura visual) */
+#railWrap { margin: 6px 0 14px; }
+#rail { width: 100%; height: 86px; display: block; }
+.rail-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  fill: var(--dim); text-anchor: middle;
+}
+.rail-label.ok { fill: var(--green); }
+.rail-label.broken { fill: var(--red); }
+.rail-label.dead { fill: #45526440; }
+
+/* Cenário */
+.dados {
+  border: 1px dashed var(--line); border-radius: 8px;
+  background: var(--panel-2); padding: 12px; margin: 12px 0;
+}
+.dados .tag, .pergunta .tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: .12em; color: var(--dim); display: block; margin-bottom: 6px;
+}
+.dados ul { list-style: none; }
+.dados li {
+  font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 3px 0;
+}
+.dados li::before { content: '› '; color: var(--blue); }
+.pergunta { margin: 12px 0; }
+.pergunta p { font-weight: 600; }
+.hint {
+  font-size: 13px; color: var(--dim); background: var(--panel-2);
+  border-radius: 8px; padding: 10px 12px; margin-top: 10px;
+}
+
+textarea {
+  width: 100%; min-height: 96px; resize: vertical;
+  background: var(--ink); color: var(--text);
+  border: 1px solid var(--line); border-radius: 8px;
+  padding: 12px; font-family: 'IBM Plex Sans', sans-serif; font-size: 15px;
+}
+textarea:focus { outline: 2px solid var(--blue); outline-offset: 1px; }
+
+button {
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 600;
+  border: 1px solid var(--line); border-radius: 8px;
+  background: var(--panel-2); color: var(--text);
+  padding: 11px 16px; cursor: pointer;
+}
+button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+button.primary { background: var(--blue); border-color: var(--blue); color: #06101C; }
+button:disabled { opacity: .4; cursor: default; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+/* Feedback */
+.feedback { border-radius: 8px; padding: 12px 14px; margin-top: 14px; font-size: 14px; }
+.feedback.ok { background: #10331f; border: 1px solid var(--green); }
+.feedback.nope { background: #351616; border: 1px solid var(--red); }
+
+/* Rating */
+.rating-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+.rating-row button { padding: 12px 4px; font-size: 13px; }
+.rating-row button small {
+  display: block; font-family: 'IBM Plex Mono', monospace;
+  font-weight: 400; font-size: 10px; color: var(--dim); margin-top: 2px;
+}
+.rating-row button.suggested { border-color: var(--blue); }
+
+.dim-note { color: var(--dim); font-size: 13px; margin-top: 8px; }
+.spinner { color: var(--dim); font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 8px 0; }
+.hidden { display: none; }
+
+footer { text-align: center; padding: 12px; }
+footer button { font-size: 12px; padding: 8px 12px; background: none; border: none; color: var(--dim); text-decoration: underline; }
+
+#statsBox table { width: 100%; border-collapse: collapse; font-size: 13px; }
+#statsBox td, #statsBox th {
+  text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line);
+}
+#statsBox th { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--dim); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>C_TS452 <span>· cockpit</span></h1>
+  <div id="queueCount" aria-live="polite">carregando fila…</div>
+</header>
+
+<main>
+  <div id="conceptCard" class="card hidden">
+    <span class="area-badge" id="areaBadge"></span>
+    <div class="concept-title" id="conceptTitle"></div>
+    <div class="work-case hidden" id="workCase"></div>
+    <div class="state-line" id="stateLine"></div>
+    <div class="btn-row">
+      <button class="primary" id="btnScenario">Gerar cenário</button>
+      <button id="btnRule">Mostrar regra</button>
+    </div>
+    <div class="hint hidden" id="ruleBox"></div>
+  </div>
+
+  <div id="railWrap" class="card hidden">
+    <svg id="rail" viewBox="0 0 600 86" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+  </div>
+
+  <div id="scenarioCard" class="card hidden">
+    <p id="scenarioText"></p>
+    <div class="dados">
+      <span class="tag">DADOS FORNECIDOS</span>
+      <ul id="dadosList"></ul>
+    </div>
+    <div class="pergunta">
+      <span class="tag">O QUE A PROVA TESTA</span>
+      <p id="perguntaText"></p>
+    </div>
+    <div class="hint hidden" id="workedHint"></div>
+    <textarea id="answerBox" placeholder="Escreve teu raciocínio aqui…" aria-label="Sua resposta"></textarea>
+    <div class="btn-row">
+      <button class="primary" id="btnEvaluate">Avaliar resposta</button>
+    </div>
+    <div id="feedbackBox" class="feedback hidden" aria-live="polite"></div>
+    <div id="ratingRow" class="rating-row hidden">
+      <button data-rating="1">Errei<small>again</small></button>
+      <button data-rating="2">Difícil<small>hard</small></button>
+      <button data-rating="3">Bom<small>good</small></button>
+      <button data-rating="4">Fácil<small>easy</small></button>
+    </div>
+    <p class="dim-note hidden" id="nextDue"></p>
+  </div>
+
+  <div id="loading" class="spinner hidden">processando…</div>
+  <div id="doneCard" class="card hidden">
+    <div class="concept-title">Fila zerada 🎯</div>
+    <p class="dim-note">Nada vencido agora. O FSRS te chama quando a curva de esquecimento mandar.</p>
+  </div>
+
+  <div id="statsBox" class="card hidden"></div>
+</main>
+
+<footer>
+  <button id="btnStats">o que eu mais erro</button>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+<script>
+gsap.registerPlugin(MotionPathPlugin);
+const $ = id => document.getElementById(id);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let queue = [], current = null, scenario = null, evaluation = null, sessionId = null;
+
+const api = async (path, opts) => {
+  const res = await fetch(path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || res.status);
+  return data;
+};
+
+async function boot() {
+  try {
+    const s = await api('/api/sessions', { method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'retrieval' }) });
+    sessionId = s.session_id;
+  } catch (e) { /* sessão é opcional */ }
+  await loadQueue();
+}
+
+async function loadQueue() {
+  try {
+    const data = await api('/api/due');
+    queue = data.due;
+    renderQueueCount();
+    nextConcept();
+  } catch (e) {
+    $('queueCount').textContent = 'erro: ' + e.message;
+  }
+}
+
+function renderQueueCount() {
+  $('queueCount').innerHTML = queue.length
+    ? `fila: <b>${queue.length}</b> conceito${queue.length > 1 ? 's' : ''}`
+    : 'fila: 0';
+}
+
+function nextConcept() {
+  scenario = null; evaluation = null;
+  ['scenarioCard','railWrap','feedbackBox','ratingRow','ruleBox','workedHint','nextDue']
+    .forEach(id => $(id).classList.add('hidden'));
+  $('answerBox').value = '';
+  $('btnEvaluate').disabled = false;
+
+  if (!queue.length) {
+    $('conceptCard').classList.add('hidden');
+    $('doneCard').classList.remove('hidden');
+    return;
+  }
+  current = queue[0];
+  $('doneCard').classList.add('hidden');
+  $('conceptCard').classList.remove('hidden');
+  $('areaBadge').textContent = `${current.area} · ${current.weight_pct}%`;
+  $('conceptTitle').textContent = current.title;
+
+  const wc = $('workCase');
+  if (current.work_case_ref) {
+    wc.textContent = 'Teu caso real: ' + current.work_case_ref;
+    wc.classList.remove('hidden');
+  } else wc.classList.add('hidden');
+
+  $('stateLine').textContent = current.state
+    ? `estado: ${current.state} · reps: ${current.reps} · lapses: ${current.lapses} · estabilidade: ${(+current.stability).toFixed(1)}d`
+    : 'estado: novo (nunca revisado)';
+}
+
+$('btnRule').addEventListener('click', () => {
+  const box = $('ruleBox');
+  box.textContent = current.production_rule || 'Sem regra cadastrada.';
+  box.classList.toggle('hidden');
+});
+
+$('btnScenario').addEventListener('click', async () => {
+  $('loading').classList.remove('hidden');
+  $('btnScenario').disabled = true;
+  try {
+    const data = await api('/api/examiner/scenario', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ concept_id: current.id, mode: 'retrieval' })
+    });
+    scenario = data.scenario;
+    renderScenario();
+  } catch (e) {
+    alert('Erro ao gerar cenário: ' + e.message);
+  } finally {
+    $('loading').classList.add('hidden');
+    $('btnScenario').disabled = false;
+  }
+});
+
+function renderScenario() {
+  $('scenarioText').textContent = scenario.cenario;
+  $('dadosList').innerHTML = (scenario.dados_fornecidos || [])
+    .map(d => `<li>${escapeHtml(d)}</li>`).join('');
+  $('perguntaText').textContent = scenario.pergunta;
+
+  const hint = $('workedHint');
+  if (scenario.raciocinio_parcial) {
+    hint.textContent = 'Raciocínio parcial: ' + scenario.raciocinio_parcial;
+    hint.classList.remove('hidden');
+  } else hint.classList.add('hidden');
+
+  buildRail(scenario.fluxo || ['PR','PO','GR','IV']);
+  $('railWrap').classList.remove('hidden');
+  $('scenarioCard').classList.remove('hidden');
+  $('answerBox').focus();
+}
+
+$('btnEvaluate').addEventListener('click', async () => {
+  const answer = $('answerBox').value.trim();
+  if (!answer) { $('answerBox').focus(); return; }
+  $('loading').classList.remove('hidden');
+  $('btnEvaluate').disabled = true;
+  try {
+    const data = await api('/api/examiner/evaluate', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ concept_id: current.id, scenario, answer })
+    });
+    evaluation = data.evaluation;
+    renderEvaluation();
+  } catch (e) {
+    alert('Erro na avaliação: ' + e.message);
+    $('btnEvaluate').disabled = false;
+  } finally {
+    $('loading').classList.add('hidden');
+  }
+});
+
+function renderEvaluation() {
+  const box = $('feedbackBox');
+  box.className = 'feedback ' + (evaluation.correct ? 'ok' : 'nope');
+  box.textContent = (evaluation.correct ? '✓ ' : '✗ ') + evaluation.feedback;
+  box.classList.remove('hidden');
+
+  animateRail(evaluation.correct, evaluation.etapa_quebrada);
+
+  const row = $('ratingRow');
+  row.classList.remove('hidden');
+  row.querySelectorAll('button').forEach(b => {
+    b.classList.toggle('suggested', +b.dataset.rating === evaluation.sugestao_rating);
+  });
+}
+
+document.querySelectorAll('#ratingRow button').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const rating = +btn.dataset.rating;
+    $('loading').classList.remove('hidden');
+    try {
+      const res = await api('/api/review', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          concept_id: current.id,
+          rating,
+          session_id: sessionId,
+          scenario_text: scenario ? JSON.stringify(scenario) : null,
+          user_answer: $('answerBox').value.trim() || null,
+          ai_evaluation: evaluation ? JSON.stringify(evaluation) : null,
+          correct: evaluation ? evaluation.correct : null
+        })
+      });
+      const dueDate = new Date(res.due);
+      $('nextDue').textContent = `Próxima revisão: ${dueDate.toLocaleDateString('pt-BR')} (estabilidade ${res.stability.toFixed(1)}d)`;
+      $('nextDue').classList.remove('hidden');
+      queue.shift();
+      renderQueueCount();
+      setTimeout(nextConcept, 1400);
+    } catch (e) {
+      alert('Erro ao registrar: ' + e.message);
+    } finally {
+      $('loading').classList.add('hidden');
+    }
+  });
+});
+
+$('btnStats').addEventListener('click', async () => {
+  const box = $('statsBox');
+  if (!box.classList.contains('hidden')) { box.classList.add('hidden'); return; }
+  try {
+    const s = await api('/api/stats');
+    box.innerHTML = `
+      <span class="tag mono" style="font-size:10px;letter-spacing:.12em;color:var(--dim)">ERROS POR ÁREA</span>
+      <table><tr><th>área</th><th>erros</th><th>tentativas</th></tr>
+      ${s.por_area.map(a => `<tr><td>${escapeHtml(a.area)}</td><td>${a.erros}</td><td>${a.tentativas}</td></tr>`).join('')}
+      </table>
+      ${s.piores_conceitos.length ? `
+      <br><span class="tag mono" style="font-size:10px;letter-spacing:.12em;color:var(--dim)">PIORES CONCEITOS</span>
+      <table>${s.piores_conceitos.map(c => `<tr><td>${escapeHtml(c.title)}</td><td>${c.erros}✗</td></tr>`).join('')}</table>` : ''}
+    `;
+    box.classList.remove('hidden');
+  } catch (e) { alert(e.message); }
+});
+
+/* ---------- Trilho do processo (GSAP + MotionPath) ---------- */
+let railNodes = [];
+
+function buildRail(steps) {
+  railNodes = steps;
+  const svg = $('rail');
+  const W = 600, H = 86, y = 44;
+  const pad = 50;
+  const gap = steps.length > 1 ? (W - pad * 2) / (steps.length - 1) : 0;
+
+  let inner = `<path id="railPath" d="M ${pad} ${y} L ${W - pad} ${y}"
+    stroke="#263446" stroke-width="2" fill="none"/>`;
+
+  steps.forEach((s, i) => {
+    const x = pad + gap * i;
+    inner += `
+      <circle class="rail-node" data-i="${i}" cx="${x}" cy="${y}" r="9"
+        fill="#161F2B" stroke="#4DA3FF" stroke-width="2"/>
+      <text class="rail-label" data-i="${i}" x="${x}" y="${y + 28}">${escapeHtml(s)}</text>`;
+  });
+
+  inner += `<rect id="doc" x="-20" y="${y - 6}" width="12" height="12" rx="2"
+    fill="#4DA3FF" opacity="0"/>`;
+  svg.innerHTML = inner;
+}
+
+function animateRail(correct, brokenStep) {
+  const svg = $('rail');
+  const nodes = [...svg.querySelectorAll('.rail-node')];
+  const labels = [...svg.querySelectorAll('.rail-label')];
+  const doc = svg.querySelector('#doc');
+  const brokenIdx = brokenStep ? railNodes.findIndex(
+    s => s.toLowerCase() === String(brokenStep).toLowerCase()) : -1;
+  const stopIdx = correct ? railNodes.length - 1
+    : (brokenIdx >= 0 ? brokenIdx : railNodes.length - 1);
+
+  const paint = (i, color, cls) => {
+    nodes[i].setAttribute('stroke', color);
+    nodes[i].setAttribute('fill', color + '33');
+    labels[i].setAttribute('class', 'rail-label ' + cls);
+  };
+
+  if (reduced) {
+    for (let i = 0; i <= stopIdx; i++) paint(i, correct ? '#3FD68F' : (i === stopIdx ? '#FF6259' : '#3FD68F'), correct || i < stopIdx ? 'ok' : 'broken');
+    if (!correct) for (let i = stopIdx + 1; i < nodes.length; i++) labels[i].setAttribute('class', 'rail-label dead');
+    return;
+  }
+
+  const endProgress = stopIdx / (railNodes.length - 1 || 1);
+  const tl = gsap.timeline();
+  gsap.set(doc, { opacity: 1 });
+
+  tl.to(doc, {
+    duration: 1.2 * Math.max(endProgress, .2),
+    ease: 'power1.inOut',
+    motionPath: { path: '#railPath', align: '#railPath', alignOrigin: [0.5, 0.5], start: 0, end: endProgress },
+    onUpdate: function () {
+      const prog = this.progress() * endProgress;
+      const reached = Math.round(prog * (railNodes.length - 1));
+      for (let i = 0; i <= reached && i <= stopIdx; i++) {
+        if (correct || i < stopIdx) paint(i, '#3FD68F', 'ok');
+      }
+    }
+  });
+
+  if (correct) {
+    tl.add(() => paint(stopIdx, '#3FD68F', 'ok'));
+    tl.to(doc, { scale: 1.4, transformOrigin: 'center', duration: .18, yoyo: true, repeat: 1 });
+  } else {
+    tl.add(() => paint(stopIdx, '#FFB547', 'broken'));
+    tl.to(nodes[stopIdx], { attr: { stroke: '#FF6259' }, duration: .25, repeat: 3, yoyo: true });
+    tl.to(doc, { rotation: 90, opacity: .4, y: '+=6', duration: .35 }, '<');
+    // efeito cascata: tudo depois da quebra apaga em sequência
+    for (let i = stopIdx + 1; i < nodes.length; i++) {
+      tl.add(() => {
+        gsap.to(nodes[i], { opacity: .18, duration: .3 });
+        labels[i].setAttribute('class', 'rail-label dead');
+      }, `+=${0.12}`);
+    }
+  }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+boot();
+</script>
+</body>
+</html>
