@@ -1,0 +1,11 @@
+name = "c-ts452-study"
+main = "src/index.js"
+compatibility_date = "2026-06-01"
+
+[assets]
+directory = "./public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "c-ts452-db-v2"
+database_id = "COLE_AQUI_O_ID_QUE_O_WRANGLER_DEVOLVER"
