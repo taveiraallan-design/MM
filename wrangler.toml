@@ -8,4 +8,4 @@ directory = "./public"
 [[d1_databases]]
 binding = "DB"
 database_name = "c-ts452-db-v2"
-database_id = "COLE_AQUI_O_ID_QUE_O_WRANGLER_DEVOLVER"
+database_id = "8cfc660e-fa9e-48dd-89e9-2c789088f49b"
